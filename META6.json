@@ -1,0 +1,21 @@
+{
+    "auth": "github:bit4bit",
+    "authors": [
+        "Jovany Leandro G.C <bit4bit@riseup.net>"
+    ],
+    "build-depends": [
+    ],
+    "depends": [
+    ],
+    "description": "A brand new and very nice module",
+    "name": "RakuTox::Bindings",
+    "license": "Artistic-2.0",
+    "provides": {
+        "RakuTox::Bindings": "lib/RakuTox/Bindings.rakumod"
+    },
+    "resources": [
+    ],
+    "test-depends": [
+    ],
+    "version": "0.0.1"
+}
