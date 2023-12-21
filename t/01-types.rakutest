@@ -1,0 +1,9 @@
+use Test;
+use lib 'lib';
+use RakuTox::Bindings;
+
+
+isa-ok Tox_Options.new(), Tox_Options;
+
+done-testing();
+

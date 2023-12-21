@@ -1,0 +1,8 @@
+use Test;
+use lib 'lib';
+use RakuTox::Bindings;
+use NativeCall;
+
+isa-ok Tox.new(), Tox, "Tox.new without arguments";
+
+done-testing();
