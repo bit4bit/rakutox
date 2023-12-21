@@ -4,11 +4,15 @@ use RakuTox::Bindings;
 
 
 isa-ok Tox_Options.new(), Tox_Options;
-
-isa-ok Tox.new(), Tox, "Tox.new without arguments";
 cmp-ok Tox.version-major(), '>=', 0;
 cmp-ok Tox.version-minor(), '>=', 2;
 cmp-ok Tox.version-patch(), '>=', 18;
 
+ok Tox_PublicKey.from("ABC123").is-same-raw((0x4241, 0x3143, 0x3332)), "Tox_PublicKey match binary";
+
+my $tox = Tox.new();
+isa-ok $tox, Tox, "Tox.new without arguments";
+
+lives-ok { $tox.bootstrap("tox1.mf-net.eu", 33_445, Tox_PublicKey.from("B3E5FA80DC8EBD1149AD2AB35ED8B85BD546DEDE261CA593234C619249419506")) }, "Tox bootstrap node";
 done-testing();
 
