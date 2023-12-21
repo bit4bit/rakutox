@@ -4,5 +4,8 @@ use RakuTox::Bindings;
 use NativeCall;
 
 isa-ok Tox.new(), Tox, "Tox.new without arguments";
+cmp-ok Tox.version-major(), '>=', 0;
+cmp-ok Tox.version-minor(), '>=', 2;
+cmp-ok Tox.version-patch(), '>=', 18;
 
 done-testing();

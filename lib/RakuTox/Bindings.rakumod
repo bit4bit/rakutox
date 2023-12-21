@@ -26,6 +26,9 @@ sub tox_new(Pointer[Tox_Options]                   $options
            ,Pointer[int32]                $error
             ) is native(LIB) returns Pointer[CTox] { * }
 sub tox_kill(Pointer[CTox] $tox) is native(LIB) { * }
+sub tox_version_major() is native(LIB) returns uint32 { * }
+sub tox_version_minor() is native(LIB) returns uint32 { * }
+sub tox_version_patch() is native(LIB) returns uint32 { * }
 
 class Tox is export {
     has Pointer[CTox] $!ctox;
@@ -35,11 +38,21 @@ class Tox is export {
         my Pointer[int32] $err .= new();
         my Pointer[CTox] $ctox = tox_new($opts, $err);
         
-        $err != TOX_ERR_NEW_OK or die "fails creation of tox";
+        $err == TOX_ERR_NEW_OK or die "fails creation of tox";
         
         return self.bless(:$ctox);
     }
 
+    multi method version-major(Tox:U: --> Int) {
+        return tox_version_major();
+    }
+    multi method version-minor(Tox:U: --> Int) {
+        return tox_version_minor();
+    }
+    multi method version-patch(Tox:U: --> Int) {
+        return tox_version_patch();
+    }
+    
     submethod DESTROY {
         tox_kill($!ctox);
     }
