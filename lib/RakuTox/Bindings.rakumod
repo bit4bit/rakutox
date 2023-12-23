@@ -36,11 +36,11 @@ sub tox_new(Pointer[Tox_Options]                   $options
            ,Pointer[int32]                $error
             ) is native(LIB) returns Pointer[CTox] { * }
 sub tox_kill(Pointer[CTox] $tox) is native(LIB) { * }
-sub tox_bootstrap(Pointer[CTox], Str $host, uint16 $port, Pointer[uint8] $public_key, Pointer[int32] $error) is native(LIB) { * }
-sub tox_self_set_name(Pointer[CTox], Str $name is encoded('utf8'), uint16 $length, Pointer[int32] $error) is native(LIB) { * }
+sub tox_bootstrap(Pointer[CTox], Str $host, uint16 $port, Pointer[uint8] $public_key, int32 $error is rw) is native(LIB) { * }
+sub tox_self_set_name(Pointer[CTox], Str $name is encoded('utf8'), uint16 $length, int32 $error is rw) is native(LIB) { * }
 sub tox_self_get_name(Pointer[CTox], CArray[uint8] $name is rw) is native(LIB) { * }
 sub tox_self_get_name_size(Pointer[CTox] --> size_t) is native(LIB) { * }
-sub tox_self_set_status_message(Pointer[CTox], Str $status is encoded('utf8'), uint16 $length, Pointer[int32] $error) is native(LIB) { * }
+sub tox_self_set_status_message(Pointer[CTox], Str $status is encoded('utf8'), uint16 $length, int32 $error is rw) is native(LIB) { * }
 sub tox_self_get_status_message(Pointer[CTox], CArray[uint8] $status is rw) is native(LIB) { * }
 sub tox_self_get_status_message_size(Pointer[CTox] --> size_t) is native(LIB) { * }
 sub tox_self_get_connection_status(Pointer[CTox], int32 $status is rw, Pointer $user_data is rw) is native(LIB) { * }
@@ -94,7 +94,7 @@ class Tox is export {
     }
 
     method bootstrap(Str $host, Int $port, Tox_PublicKey $public_key) {
-        my Pointer[int32] $err .= new();
+        my int32 $err = 0;
 
         tox_bootstrap($!ctox, $host, $port, $public_key.as-pointer, $err);
 
@@ -108,7 +108,7 @@ class Tox is export {
     }
 
     method set_name(Str $name) {
-        my Pointer[int32] $err .= new();
+        my int32 $err;
 
         tox_self_set_name($!ctox, $name, $name.chars, $err);
 
@@ -116,7 +116,7 @@ class Tox is export {
     }
 
     method set_status_message(Str $status) {
-        my Pointer[int32] $err .= new();
+        my int32 $err;
 
         tox_self_set_status_message($!ctox, $status, $status.chars, $err);
 
