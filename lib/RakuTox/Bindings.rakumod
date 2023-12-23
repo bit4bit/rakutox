@@ -53,7 +53,7 @@ class Tox_PublicKey is export {
     has Blob[uint16] $!hex_bin is built;
 
     multi method from(::?CLASS:U $klass: Str $hex_key) {
-        my $source_blob = $hex_key.encode("ascii");
+        my $source_blob = $hex_key.encode('utf8');
 
         my @hex_blob = (0,2 ... $source_blob.list.elems - 1).map({ $source_blob.read-uint16($_) });
         my $hex_bin = blob16.new(@hex_blob);
