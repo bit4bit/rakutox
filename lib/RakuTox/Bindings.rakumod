@@ -37,8 +37,8 @@ sub tox_version_minor() is native(LIB) returns uint32 { * }
 sub tox_version_patch() is native(LIB) returns uint32 { * }
 
 class Tox_PublicKey is export {
-    has Str $.hex_key is required;
-    has Blob[uint16] $.hex_bin is required;
+    has Str $!hex_key is built;
+    has Blob[uint16] $!hex_bin is built;
 
     multi method from(::?CLASS:U $klass: Str $hex_key) {
         my $source_blob = $hex_key.encode("ascii");
@@ -59,7 +59,7 @@ class Tox_PublicKey is export {
 }
 
 class Tox is export {
-    has Pointer[CTox] $.ctox is required;
+    has Pointer[CTox] $.ctox is built;
 
     method new() {
         my Pointer[Tox_Options] $opts .= new();
