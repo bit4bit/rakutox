@@ -21,5 +21,7 @@ cmp-ok $tox.name, 'eq', "rakutox1";
 $tox.set_status_message('rakutox1 funciona!!');
 cmp-ok $tox.status_message, 'eq', 'rakutox1 funciona!!';
 
+cmp-ok $tox.connection_status, 'eq', TOX_CONNECTION_NONE;
+
 done-testing();
 

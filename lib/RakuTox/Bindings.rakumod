@@ -2,6 +2,12 @@ unit module RakuTox::Bindings;
 use NativeCall;
 constant LIB = "toxcore";
 
+enum Tox_Connection_Status is export (
+    TOX_CONNECTION_NONE => 0,
+    TOX_CONNECTION_TCP => 1,
+    TOX_CONNECTION_UDP => 2
+);
+
 enum Tox_Err_New (
    TOX_ERR_NEW_OK => 0,
    TOX_ERR_NEW_NULL => 1,
@@ -37,7 +43,7 @@ sub tox_self_get_name_size(Pointer[CTox] --> size_t) is native(LIB) { * }
 sub tox_self_set_status_message(Pointer[CTox], Str $status is encoded('utf8'), uint16 $length, Pointer[int32] $error) is native(LIB) { * }
 sub tox_self_get_status_message(Pointer[CTox], CArray[uint8] $status is rw) is native(LIB) { * }
 sub tox_self_get_status_message_size(Pointer[CTox] --> size_t) is native(LIB) { * }
-
+sub tox_self_get_connection_status(Pointer[CTox], int32 $status is rw, Pointer $user_data is rw) is native(LIB) { * }
 sub tox_version_major() is native(LIB) returns uint32 { * }
 sub tox_version_minor() is native(LIB) returns uint32 { * }
 sub tox_version_patch() is native(LIB) returns uint32 { * }
@@ -121,6 +127,15 @@ class Tox is export {
         my $out = CArray[uint8].allocate(tox_self_get_status_message_size($!ctox));
         tox_self_get_status_message($!ctox, $out);
         return Buf.new($out.list).decode('utf8');
+    }
+
+    method connection_status {
+        my int32 $out .= new;
+        my Pointer $user_data .= new;
+
+        tox_self_get_connection_status($!ctox, $out, $user_data);
+
+        Tox_Connection_Status($out)
     }
 
     submethod DESTROY {
