@@ -34,6 +34,9 @@ sub tox_bootstrap(Pointer[CTox], Str $host, uint16 $port, Pointer[uint8] $public
 sub tox_self_set_name(Pointer[CTox], Str $name is encoded('utf8'), uint16 $length, Pointer[int32] $error) is native(LIB) { * }
 sub tox_self_get_name(Pointer[CTox], CArray[uint8] $name is rw) is native(LIB) { * }
 sub tox_self_get_name_size(Pointer[CTox] --> size_t) is native(LIB) { * }
+sub tox_self_set_status_message(Pointer[CTox], Str $status is encoded('utf8'), uint16 $length, Pointer[int32] $error) is native(LIB) { * }
+sub tox_self_get_status_message(Pointer[CTox], CArray[uint8] $status is rw) is native(LIB) { * }
+sub tox_self_get_status_message_size(Pointer[CTox] --> size_t) is native(LIB) { * }
 
 sub tox_version_major() is native(LIB) returns uint32 { * }
 sub tox_version_minor() is native(LIB) returns uint32 { * }
@@ -104,6 +107,20 @@ class Tox is export {
         tox_self_set_name($!ctox, $name, $name.chars, $err);
 
         $err == 0 or die "fails to set name $name";
+    }
+
+    method set_status_message(Str $status) {
+        my Pointer[int32] $err .= new();
+
+        tox_self_set_status_message($!ctox, $status, $status.chars, $err);
+
+        $err == 0 or die "fails to set status message $status";
+    }
+
+    method status_message {
+        my $out = CArray[uint8].allocate(tox_self_get_status_message_size($!ctox));
+        tox_self_get_status_message($!ctox, $out);
+        return Buf.new($out.list).decode('utf8');
     }
 
     submethod DESTROY {

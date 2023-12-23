@@ -18,5 +18,8 @@ lives-ok { $tox.bootstrap("tox1.mf-net.eu", 33_445, Tox_PublicKey.from("B3E5FA80
 $tox.set_name("rakutox1");
 cmp-ok $tox.name, 'eq', "rakutox1";
 
+$tox.set_status_message('rakutox1 funciona!!');
+cmp-ok $tox.status_message, 'eq', 'rakutox1 funciona!!';
+
 done-testing();
 
