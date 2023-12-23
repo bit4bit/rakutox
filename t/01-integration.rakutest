@@ -14,5 +14,9 @@ my $tox = Tox.new();
 isa-ok $tox, Tox, "Tox.new without arguments";
 
 lives-ok { $tox.bootstrap("tox1.mf-net.eu", 33_445, Tox_PublicKey.from("B3E5FA80DC8EBD1149AD2AB35ED8B85BD546DEDE261CA593234C619249419506")) }, "Tox bootstrap node";
+
+$tox.set_name("rakutox1");
+cmp-ok $tox.name, 'eq', "rakutox1";
+
 done-testing();
 

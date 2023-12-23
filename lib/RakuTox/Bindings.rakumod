@@ -31,6 +31,9 @@ sub tox_new(Pointer[Tox_Options]                   $options
             ) is native(LIB) returns Pointer[CTox] { * }
 sub tox_kill(Pointer[CTox] $tox) is native(LIB) { * }
 sub tox_bootstrap(Pointer[CTox], Str $host, uint16 $port, Pointer[uint8] $public_key, Pointer[int32] $error) is native(LIB) { * }
+sub tox_self_set_name(Pointer[CTox], Str $name is encoded('utf8'), uint16 $length, Pointer[int32] $error) is native(LIB) { * }
+sub tox_self_get_name(Pointer[CTox], CArray[uint8] $name is rw) is native(LIB) { * }
+sub tox_self_get_name_size(Pointer[CTox] --> size_t) is native(LIB) { * }
 
 sub tox_version_major() is native(LIB) returns uint32 { * }
 sub tox_version_minor() is native(LIB) returns uint32 { * }
@@ -87,6 +90,20 @@ class Tox is export {
         tox_bootstrap($!ctox, $host, $port, $public_key.as-pointer, $err);
 
         $err == TOX_ERR_BOOTSTRAP_OK or die "fails bootstrap $host:$port";
+    }
+
+    method name {
+        my $out = CArray[uint8].allocate(tox_self_get_name_size($!ctox));
+        tox_self_get_name($!ctox, $out);
+        return Buf.new($out.list).decode('utf8');
+    }
+
+    method set_name(Str $name) {
+        my Pointer[int32] $err .= new();
+
+        tox_self_set_name($!ctox, $name, $name.chars, $err);
+
+        $err == 0 or die "fails to set name $name";
     }
 
     submethod DESTROY {
