@@ -23,5 +23,13 @@ cmp-ok $tox.status_message, 'eq', 'rakutox1 funciona!!';
 
 cmp-ok $tox.connection_status, 'eq', TOX_CONNECTION_NONE;
 
+lives-ok {
+    $tox.connection_status_handler(
+        -> $tox {
+            return TOX_CONNECTION_NONE;
+        }
+    )
+}, 'Tox set connection callback';
+
 done-testing();
 

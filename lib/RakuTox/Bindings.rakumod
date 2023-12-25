@@ -44,6 +44,7 @@ sub tox_self_set_status_message(Pointer[CTox], Str $status is encoded('utf8'), u
 sub tox_self_get_status_message(Pointer[CTox], CArray[uint8] $status is rw) is native(LIB) { * }
 sub tox_self_get_status_message_size(Pointer[CTox] --> size_t) is native(LIB) { * }
 sub tox_self_get_connection_status(Pointer[CTox], int32 $status is rw, Pointer $user_data is rw) is native(LIB) { * }
+sub tox_callback_self_connection_status(Pointer[CTox], &callback (Pointer[CTox], int32, Pointer --> int32)) is native(LIB) { * }
 sub tox_version_major() is native(LIB) returns uint32 { * }
 sub tox_version_minor() is native(LIB) returns uint32 { * }
 sub tox_version_patch() is native(LIB) returns uint32 { * }
@@ -138,6 +139,19 @@ class Tox is export {
         Tox_Connection_Status($out)
     }
 
+    method connection_status_handler(&cb) {
+        my Pointer $user_data .= new;
+        my $wrapper = -> $tox, $status, $user_data {
+            CATCH {
+                # callback must not bubble up exceptions
+                default { .Str.say; }
+            }
+            
+            &cb(self);
+        };
+        
+        tox_callback_self_connection_status($!ctox, $wrapper);
+    }
     submethod DESTROY {
         tox_kill($!ctox);
     }
